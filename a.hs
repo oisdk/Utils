@@ -40,7 +40,7 @@ instance Num Expr where
   fromInteger = Expr . ana CstF
   negate      = Expr . Fix . NegF . getExpr
   
-newtype AnnF f a r = AnnF { getAnn :: (f r, a) } deriving (Functor)
+newtype AnnF f a r = AnnF { getAnn :: (f r, a) } deriving (Functor, Eq, Ord)
 type Ann f a = Fix (AnnF f a)
 
 newtype NamedExpr = Named { getNamed :: Ann ExprF (Maybe String) }
@@ -66,11 +66,11 @@ instance Num NamedExpr where
   signum = fromInteger . signum . evalName
   negate = unnamed . NegF . getNamed
   
--- instance Show NamedExpr where
---   show = show . zygo void alg . getNamed where
---     alg (AnnF (_, Just s)) =
---     alg e@(CstF i  ) = integer i
---     alg e@(NegF a  ) = char '-' <> par e a
---     alg e@(SumF a b) = par e a <+> char '+' <+> par e b
---     alg e@(PrdF a b) = par e a <+> char '*' <+> par e b
---     par e (c,p) = if c > void e then parens p else p
+instance Show NamedExpr where
+  show = show . zygo void alg . getNamed where
+    alg (AnnF (_, Just s)) = text s
+    alg e@(AnnF (CstF i  ,_)) = integer i
+    alg e@(AnnF (NegF a  ,_)) = char '-' <> par e a
+    alg e@(AnnF (SumF a b,_)) = par e a <+> char '+' <+> par e b
+    alg e@(AnnF (PrdF a b,_)) = par e a <+> char '*' <+> par e b
+    par e (c,p) = if c > void e then parens p else p
