@@ -8,6 +8,8 @@ import Data.Functor.Foldable hiding (Foldable)
 import Text.PrettyPrint
 import Data.Functor (void)
 import Control.Arrow hiding ((<+>))
+import Data.Maybe (fromMaybe)
+import Control.Monad (join)
 
 data ExprF r = CstF Integer
              | NegF r
@@ -65,6 +67,20 @@ instance Num NamedExpr where
         | otherwise      = e
   signum = fromInteger . signum . evalName
   negate = unnamed . NegF . getNamed
+  
+opto :: Functor f => (a -> Maybe b) -> (f b -> b) -> Ann f a -> b
+opto ann alg = cata coalg where
+  coalg (AnnF (f, a)) = fromMaybe (alg f) (ann a)
+  
+-- para :: (Base t (t, a) -> a) -> t -> a
+-- para alg = fst . cata (alg &&& Fix . fmap snd)
+--
+paraopto :: Functor f => (a -> Maybe b) -> (f (Fix f, b) -> b) -> Ann f a -> b
+paraopto ann alg = para palg where
+  palg (AnnF (f, a)) = fromMaybe (alg $ first stripAll <$> f) (ann a)
+  
+-- zygo :: Foldable t => (Base t b -> b) -> (Base t (b, a) -> a) -> t -> a
+-- zygo f = gfold (distZygo f)
   
 instance Show NamedExpr where
   show = show . zygo void alg . getNamed where
