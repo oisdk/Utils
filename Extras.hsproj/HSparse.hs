@@ -5,7 +5,7 @@ import Data.Map.Strict (insertWith, Map, insertLookupWithKey)
 import qualified Data.Map.Strict as M
 import Data.Maybe (isNothing)
 import Data.Tuple (swap)
-import Data.Set (fromList, size)
+import Control.Monad.State
 import Control.Applicative (Alternative, pure, empty, (<$>), liftA2)
 
 isSelfRef :: (Integral a, Foldable f) => f a -> Bool
@@ -13,7 +13,7 @@ isSelfRef xs = foldr f (const True) xs 0 where
   f e a n = count n xs == e && a (n+1)
   
 count :: (Eq a, Foldable f, Integral n) => a -> f a -> n
-count x = foldl' (\a e -> if x == e then succ a else a) 0
+count x = foldl' (\a e -> if x == e then a+1 else a) 0
 
 partitions :: Int -> [[Int]]
 partitions n = f n n where
@@ -29,6 +29,9 @@ digits base = unfoldl (flip divMod base <$< ensure (0/=))
 infixr 9 <$<
 (<$<) :: Functor f => (b -> c) -> (a -> f b) -> a -> f c
 (g <$< f) x = fmap g (f x)
+
+filterAccumL :: (x -> acc -> (Bool, acc)) -> acc -> [x] -> ([x], acc)
+filterAccumL f s t = runState (filterM (state . f) t) s
 
 debase :: (Integral a) => a -> [a] -> a
 debase base = foldl1' (\a e -> e + base * a)
@@ -77,3 +80,9 @@ longerThan n xs = foldr (\_ a n -> 1 > n || a (n-1)) (const False) xs n
 bool :: a -> a -> Bool -> a
 bool t _ True  = t
 bool _ f False = f
+
+-- Repeatedly applies a function until it no longer changes its input
+converge :: Eq a => (a -> a) -> a -> a
+converge f x | x == y = y
+             | otherwise = converge f y
+             where y = f x
