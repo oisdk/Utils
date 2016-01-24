@@ -2,16 +2,15 @@
     DeriveFunctor
   , DeriveFoldable
   , RankNTypes
-  , ScopedTypeVariables
   , TypeFamilies
   #-}
   
-import Data.Functor.Foldable hiding (unfold)
+import Data.Functor.Foldable hiding (Foldable, unfold)
+import qualified Data.Functor.Foldable as F
 import Control.Arrow
 import Control.Comonad.Cofree
 import Control.Comonad
-import Prelude hiding (Foldable)
-import qualified Data.Foldable as F
+import Data.Foldable
 
 -- (&&&) :: (a -> b) -> (a -> c) -> a -> (b, c)
 -- (|||) :: (a -> c) -> (b -> c) -> Either a b -> c
@@ -45,8 +44,8 @@ synthesize :: forall f a. Functor f => (f a -> a) -> Fix f -> Cofree f a
 synthesize f = cata alg where
   alg c = (f . fmap extract) c :< c
 
-sizes :: (Functor f, F.Foldable f) => Fix f -> Cofree f Int
-sizes = synthesize $ (1+) . F.sum
+sizes :: (Functor f, Foldable f) => Fix f -> Cofree f Int
+sizes = synthesize $ (1+) . sum
 
 inherit :: Functor f => (Fix f -> a -> a) -> a -> Fix f -> Cofree f a
 inherit f root n = para alg n root where
@@ -62,10 +61,10 @@ newtype CofreeF f a r = CF { unCofreeF :: (a, f r) } deriving (Functor, Eq, Ord)
 
 type instance Base (Cofree f a) = CofreeF f a
 
-instance Functor f => Foldable (Cofree f a) where
+instance Functor f => F.Foldable (Cofree f a) where
   project (a :< c) = CF (a, c)
 
 instance Functor f => Unfoldable (Cofree f a) where
-  embed (CF (a, f)) = (a :< f)
+  embed = uncurry (:<) . unCofreeF
   ana alg = unfold (unCofreeF . alg)
   
