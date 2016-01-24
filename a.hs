@@ -4,12 +4,14 @@
   , TypeFamilies
   #-}
   
-import Data.Functor.Foldable hiding (Foldable, unfold)
+import Data.Functor.Foldable hiding (Foldable, unfold, fold)
 import qualified Data.Functor.Foldable as F
 import Text.PrettyPrint
 import Data.Functor (void)
 import Control.Comonad.Cofree
 import Control.Comonad
+import Data.Set (Set, insert)
+import Data.Foldable (fold)
 
 newtype CofreeF f a r = CF { unCofreeF :: (a, f r) } deriving (Functor, Eq, Ord)
 
@@ -38,11 +40,10 @@ eval = cata alg . getExpr where
   alg (PrdF a b) = a * b
 
 instance Show Expr where 
-  show = show . zygo void (ppAlg cmp) . getExpr where
-    cmp = (<) . void
+  show = show . zygo void (pprAlg ((<) . void)) . getExpr
     
-ppAlg :: (ExprF (t, Doc) -> t -> Bool) -> ExprF (t, Doc) -> Doc
-ppAlg cmp e = case e of
+pprAlg :: (ExprF (t, Doc) -> t -> Bool) -> ExprF (t, Doc) -> Doc
+pprAlg cmp e = case e of
   CstF i   -> integer i
   NegF a   -> char '-' <> par a
   SumF a b -> par a <+> char '+' <+> par b
@@ -65,6 +66,11 @@ named s (Named e) = Named (Just s :< unwrap e)
 unnamed :: ExprF (Cofree ExprF (Maybe String)) -> NamedExpr
 unnamed = Named . (Nothing :<)
 
+names :: NamedExpr -> Set String
+names = cata alg . getNamed where
+  alg (CF (Just s, e)) = insert s (fold e)
+  alg (CF (_     , e)) = fold e
+
 evalName :: NamedExpr -> Integer
 evalName = eval . Expr . ana unwrap . getNamed
 
@@ -79,9 +85,5 @@ instance Num NamedExpr where
 
 instance Show NamedExpr where
   show = show . zygo void alg . getNamed where
-    alg (CF (s, e)) = maybe (ppAlg cmp e) text s
+    alg   (CF (s, e)) = maybe (pprAlg cmp e) text s
     cmp e (CF (_, c)) = void e < c
-
-x = named "x" 3
-e = 1 + 2 - 3 :: NamedExpr
-a = (x + e) * 4
