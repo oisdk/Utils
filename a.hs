@@ -2,11 +2,11 @@
     DeriveFunctor
   , DeriveFoldable
   , TypeFamilies
+  , LambdaCase
   #-}
   
 import Data.Functor.Foldable hiding (Foldable, unfold, fold)
 import qualified Data.Functor.Foldable as F
-import Text.PrettyPrint
 import Data.Functor (void)
 import Control.Comonad.Cofree
 import Control.Comonad
@@ -34,29 +34,29 @@ newtype Expr = Expr { getExpr :: Fix ExprF }
 
 eval :: Expr -> Integer
 eval = cata alg . getExpr where
-  alg (CstF d)   = d
-  alg (NegF a)   = negate a
-  alg (SumF a b) = a + b
-  alg (PrdF a b) = a * b
+  alg = \case
+    CstF n   -> n
+    NegF n   -> negate n
+    SumF a b -> a + b
+    PrdF a b -> a * b
 
-instance Show Expr where 
-  show = show . zygo void (pprAlg ((<) . void)) . getExpr
+instance Show Expr where showsPrec _ = zygo void (pprAlg ((<) . void)) . getExpr
     
-pprAlg :: (ExprF (t, Doc) -> t -> Bool) -> ExprF (t, Doc) -> Doc
+pprAlg :: (ExprF (t, ShowS) -> t -> Bool) -> ExprF (t, ShowS) -> ShowS
 pprAlg cmp e = case e of
-  CstF i   -> integer i
-  NegF a   -> char '-' <> par a
-  SumF a b -> par a <+> char '+' <+> par b
-  PrdF a b -> par a <+> char '*' <+> par b
-  where par (c,p) = if cmp e c then parens p else p 
+  CstF i   -> shows i
+  NegF a   -> showChar '-' . par a
+  SumF a b -> par a . showString " + " . par b
+  PrdF a b -> par a . showString " * " . par b
+  where par (c,p) = showParen (cmp e c) p
 
 instance Num Expr where
   Expr a + Expr b = (Expr . Fix) (SumF a b)
   Expr a * Expr b = (Expr . Fix) (PrdF a b)
-  abs         = fromInteger . abs . eval
-  signum      = fromInteger . signum . eval
-  fromInteger = Expr . ana CstF
-  negate      = Expr . Fix . NegF . getExpr
+  abs             = fromInteger . abs . eval
+  signum          = fromInteger . signum . eval
+  fromInteger     = Expr . ana CstF
+  negate          = Expr . Fix . NegF . getExpr
   
 newtype NamedExpr = Named { getNamed :: Cofree ExprF (Maybe String) }
 
@@ -77,13 +77,12 @@ evalName = eval . Expr . ana unwrap . getNamed
 instance Num NamedExpr where
   Named a + Named b = unnamed (SumF a b)
   Named a * Named b = unnamed (PrdF a b)
-  fromInteger = unnamed . CstF
-  abs e | evalName e < 0 = negate e
-        | otherwise      = e
-  signum = fromInteger . signum . evalName
-  negate = unnamed . NegF . getNamed
+  fromInteger       = unnamed . CstF
+  abs e             = if 0 > evalName e then negate e else e
+  signum            = fromInteger . signum . evalName
+  negate            = unnamed . NegF . getNamed
 
 instance Show NamedExpr where
-  show = show . zygo void alg . getNamed where
-    alg   (CF (s, e)) = maybe (pprAlg cmp e) text s
+  showsPrec _ = zygo void alg . getNamed where
+    alg   (CF (s, e)) = maybe (pprAlg cmp e) showString s
     cmp e (CF (_, c)) = void e < c

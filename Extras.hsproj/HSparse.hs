@@ -88,32 +88,3 @@ converge f x | x == y = y
              | otherwise = converge f y
              where y = f x
 
-
-data UExpr = Const Integer
-           | Neg UExpr
-           | Prod UExpr UExpr
-           | Sum UExpr UExpr
-           deriving (Eq, Ord)
-              
-eval :: UExpr -> Integer
-eval (Const n)  = n
-eval (Neg a)    = negate (eval a)
-eval (Sum a b)  = eval a + eval b
-eval (Prod a b) = eval a * eval b
-
-prec :: UExpr -> Int
-prec e = case e of
-  Const _  -> 4
-  Neg  _   -> 3
-  Prod _ _ -> 2
-  Sum  _ _ -> 1
-      
-instance Show UExpr where
-  show = show . ppr where
-    ppr e = case e of
-      Const n  -> integer n
-      Neg a    -> char '-' <> par a
-      Prod a b -> par a <+> char '*' <+> par b
-      Sum  a b -> par a <+> char '+' <+> par b
-      where par a = if prec e > prec a then parens (ppr a) else ppr a
-      

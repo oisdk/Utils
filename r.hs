@@ -11,6 +11,7 @@ import Control.Arrow
 import Control.Comonad.Cofree
 import Control.Comonad
 import Data.Foldable
+import Data.Ratio
 
 -- (&&&) :: (a -> b) -> (a -> c) -> a -> (b, c)
 -- (|||) :: (a -> c) -> (b -> c) -> Either a b -> c
@@ -68,3 +69,41 @@ instance Functor f => Unfoldable (Cofree f a) where
   embed = uncurry (:<) . unCofreeF
   ana alg = unfold (unCofreeF . alg)
   
+data NatF a = Zero | Succ a deriving (Functor, Show, Eq, Ord)
+
+newtype Nat = Nat { getNat :: Fix NatF } deriving (Eq, Ord)
+
+nalg :: Num n => NatF n -> n
+nalg Zero = 0
+nalg (Succ n) = 1 + n
+
+talg :: (Num n, Eq n) => n -> NatF n
+talg 0 = Zero
+talg n = Succ (n-1) 
+
+instance Num Nat where
+  signum = cata alg . getNat where
+    alg Zero = Nat (Fix Zero)
+    alg (Succ _) = (Nat . Fix . Succ . Fix) Zero
+  abs = id
+  Nat a + Nat b = Nat (cata alg a b) where
+    alg Zero = id
+    alg (Succ n) = Fix . Succ . n
+  fromInteger = Nat . ana talg
+  Nat a * b = cata alg a b where
+    alg Zero _ = Nat (Fix Zero)
+    alg (Succ n) b = b + (n b)
+  Nat a - Nat (Fix b) = Nat (cata alg a b) where
+    alg Zero _ = Fix Zero
+    alg (Succ n) Zero = Fix (Succ (n Zero))
+    alg (Succ n) (Succ (Fix b)) = n b
+  
+instance Show Nat where show = show . cata nalg . getNat
+    
+instance Enum Nat where
+  toEnum = Nat . ana talg
+  fromEnum = cata nalg . getNat
+  succ = Nat . Fix . Succ . getNat
+  pred (Nat (Fix (Succ n))) = Nat n
+  
+instance Real Nat where toRational = (%1) . cata nalg . getNat
