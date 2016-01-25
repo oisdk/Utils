@@ -17,8 +17,7 @@ newtype CofreeF f a r = CF { unCofreeF :: (a, f r) } deriving (Functor, Eq, Ord)
 
 type instance Base (Cofree f a) = CofreeF f a
 
-instance Functor f => F.Foldable (Cofree f a) where
-  project (a :< c) = CF (a, c)
+instance Functor f => F.Foldable (Cofree f a) where project (a :< c) = CF (a, c)
 
 instance Functor f => Unfoldable (Cofree f a) where
   embed = uncurry (:<) . unCofreeF
@@ -41,7 +40,7 @@ eval = cata alg . getExpr where
     PrdF a b -> a * b
 
 instance Show Expr where showsPrec _ = zygo void (pprAlg ((<) . void)) . getExpr
-    
+
 pprAlg :: (ExprF (t, ShowS) -> t -> Bool) -> ExprF (t, ShowS) -> ShowS
 pprAlg cmp e = case e of
   CstF i   -> shows i
