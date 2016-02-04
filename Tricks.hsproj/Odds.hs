@@ -5,8 +5,8 @@ import Data.Monoid
 import Data.Foldable
 import Control.Applicative
   
--- | A Oddsability monad. The singleton is a certainty, with more than one, the
--- Oddsability of the head element is given by a rational number.
+-- | A Odds monad. The singleton is a certainty, with more than one, the
+-- Odds of the head element is given by a rational number.
 data Odds a = Certainly a | (Rational, a) :/: Odds a
 
 instance Functor Odds where
