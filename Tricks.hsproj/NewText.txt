@@ -1,0 +1,23 @@
+(source_file
+  (struct_decl Some<E : Equatable> type=Some.Type interface type=Some<τ_0_0>.Type access=internal
+    (pattern_binding_decl
+      (pattern_typed type=E
+        (pattern_named type=E a)
+        (type_ident
+          (component id=E bind=type))))
+    (var_decl a type=E interface type=τ_0_0 access=internal let storage_kind=stored)
+    (pattern_binding_decl
+      (pattern_typed type=Double
+        (pattern_named type=Double b)
+        (type_ident
+          (component id=Double bind=type))))
+    (var_decl b type=Double access=internal let storage_kind=stored)
+    (constructor_decl implicit inita:b: type=<E : Equatable> Some<E>.Type -> a: E, b: Double -> Some<E> interface type=<τ_0_0 where τ_0_0 : Equatable> Some<τ_0_0>.Type -> a:τ_0_0,b:Double -> Some<τ_0_0> access=internal designated
+      (body_params
+        (pattern_typed implicit type=inout Some<E>
+          (pattern_named implicit type=inout Some<E> self))
+        (pattern_tuple implicit type=a: E, b: Double names=a,b
+          (pattern_typed implicit type=E
+            (pattern_named implicit type=E a))
+          (pattern_typed implicit type=Double
+            (pattern_named implicit type=Double b)))))))

@@ -1,0 +1,44 @@
+source_file
+
+to_level_code_decl
+
+struct_decl 
+  "name"<G : Generics> 
+  type='Type.Type' 
+  interface type='Type<τ_0_0>.Type'
+  access=public/private/internal
+  
+pattern_binding_decl
+  pattern_typed type='Type'
+    pattern_named type='Type' 'name'
+    type_ident
+      component
+        id='Type'
+        bind=type
+
+var_decl 
+  "a" 
+  type='E' 
+  interface type='τ_0_0' 
+  access=internal 
+  let 
+  storage_kind=stored/computed
+
+func_decl
+  'annonname=208hgwfb098'
+  interface type=...
+  access=...
+  getter_for=varname
+
+    body_params
+      pattern_typed implicit type='type'
+        pattern_named """"""
+      pattern_tuple implicit type='(a: E, b: Double' names=a,b
+
+constructor_decl
+
+call_expr
+
+if_stmt
+
+brace_stmt

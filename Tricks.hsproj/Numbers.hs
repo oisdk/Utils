@@ -14,6 +14,8 @@ import AppFunc
 import Folds
 import Maps
 import Data.Tuple (swap)
+import Data.Set (empty, member, insert)
+import Data.Maybe (isNothing)
 
 isSelfRef :: (Integral a, Foldable f) => f a -> Bool
 isSelfRef xs = foldr f (const True) xs 0 where 
@@ -30,11 +32,19 @@ digits base = unfoldl (flip divMod base <$< ensure (0/=))
 debase :: (Integral a) => a -> [a] -> a
 debase base = foldl1' (\a e -> e + base * a)
 
-selfRefs :: [Int]
-selfRefs = [ debase 10 d | b <- [1..10]
-                         , d <- partitions b
-                         , isSelfRef d ]
+selfRefs :: Int -> [Int]
+selfRefs base = [ debase base d | b <- [1..base]
+                                , d <- partitions b
+                                , isSelfRef d ]
                          
 isLookSay :: Integral a => a -> Bool
 isLookSay n = maybe False (counts d ==) (fromListNoRep =<< fmap (map swap) (pairs d)) where 
   d = digits 10 n
+  
+twoSum :: Integral a => a -> [a] -> Bool
+twoSum x = isNothing . foldr f base where
+  base = Just empty
+  f e Nothing = Nothing
+  f e (Just s) | member e s = Nothing
+               | otherwise = Just (insert (x-e) s)
+               

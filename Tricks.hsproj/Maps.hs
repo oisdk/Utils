@@ -6,10 +6,12 @@ module Maps
   ) where
   
 import Data.Map.Strict (Map, insertWith, empty, insertLookupWithKey, singleton)
-import Data.Foldable (foldr, foldr1, Foldable)
+import Data.Foldable (foldr, foldr1, Foldable, foldl')
 import Prelude hiding (foldr)
 import Data.Maybe (isNothing)
+import Data.Functor
 import Data.Monoid
+import Control.Monad.State
 import Control.Arrow (first)
 
 import AppFunc
@@ -31,7 +33,21 @@ mostFrequent :: (Ord k, Foldable f) => f k -> Maybe (Int, k)
 mostFrequent = (\(_,a,b) -> (a,b)) <$< foldr f Nothing where
   f e Nothing = Just (singleton e 1, 1, e)
   f e (Just (m, c, b)) = case compare d c of
-    LT -> Just (n, c, b)
-    EQ -> Just (n, c, b)
     GT -> Just (n, d, e)
+    _  -> Just (n, c, b)
     where (d, n) = incrementRet e m
+
+-- insertLookupWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a -> (Maybe a, Map k a)
+
+fstt :: (a, b, c) -> a
+fstt (x, _, _) = x
+
+  
+canonize :: Ord a => [a] -> [Int]
+canonize xs = evalState (traverse f xs) (0, empty) where
+  f :: Ord k => k -> State (Int, Map k Int) Int
+  f x = do
+    (n, m) <- get
+    case insertLookupWithKey (\_ _ b -> b) x n m of
+      (Nothing, m) -> put (n+1,m) $> n
+      (Just i , _) -> pure i

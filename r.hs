@@ -107,3 +107,5 @@ instance Enum Nat where
   pred (Nat (Fix (Succ n))) = Nat n
   
 instance Real Nat where toRational = (%1) . cata nalg . getNat
+
+--mutu :: ((Base t a, Base u b) -> (a, b))
