@@ -1,6 +1,24 @@
 -- Haskell Playground 1.0
-let a = equalProbs [1, 2]
-let b = equalProbs [3, 4]
+let a = equalProbs [1..5]
+let b = equalProbs [6..10]
 let p = flatten (equalProbs [a, b])
 
+p
+probOf 1 p
 probOf 2 p
+probOf 3 p
+probOf 4 p
+probOf 5 p
+probOf 6 p
+probOf 7 p
+probOf 8 p
+probOf 9 p
+probOf 10 p
+
+
+let x = equalProbs [[1], [2]] >>= equalProbs
+
+probOf 1 x
+
+equalProbs [1..5]
+
