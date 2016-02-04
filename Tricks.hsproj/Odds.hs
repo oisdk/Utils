@@ -41,6 +41,8 @@ flatten ((p,x) ::: xs) = conc p x (flatten xs)
 instance Foldable Odds where
   foldMap f (Certainly x) = f x
   foldMap f ((_,x) ::: xs) = f x <> foldMap f xs
+  foldr f i (Certainly x) = f x i
+  foldr f i ((_,x) ::: xs) = f x (foldr f i xs)
  
 instance Applicative Odds where
   pure = Certainly
