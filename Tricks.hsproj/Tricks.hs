@@ -1,25 +1,28 @@
+{-# LANGUAGE DataKinds, TypeFamilies, GADTs #-}
+
 module Tricks where
   
-import qualified Data.Set as S
-import Control.Monad (filterM)
-import Control.Monad.State
-import Data.Maybe (catMaybes)
-import Data.List (mapAccumL)
-import qualified Data.Map.Strict as M
+import Data.Foldable
+import Data.Function
+  
+data Nat = Z | S Nat deriving Eq
 
-dedupe :: Ord key => [(key,val)] -> [val]
-dedupe xs = catMaybes $ evalState (mapM f xs) S.empty where
-  f :: Ord k => (k,v) -> State (S.Set k) (Maybe v)
-  f (k,v) = do
-    set <- get
-    if S.member k set 
-      then
-        return Nothing
-      else do
-        put (S.insert k set)
-        return (Just v)
+data Vec n a where
+  Nil  :: Vec Z a
+  (:-) :: a -> Vec n a -> Vec (S n) a
+  
+instance Foldable (Vec n) where
+  foldr _ i Nil = i
+  foldr f i (x :- xs) = f x (foldr f i xs)
+  
+instance Eq a => Eq (Vec n a) where
+  (==) = (==) `on` toList
+  
+instance Show a => Show (Vec n a) where
+  show = show . toList
+  
+instance Ord a => Ord (Vec n a) where
+  compare = compare `on` toList
+  
+type Mat n a = Vec n (Vec n a)
 
-canonize = snd . mapAccumL f (0, M.empty) where
-  f a@(n,m) e = case M.lookup e m of
-    Nothing -> ((n+1, M.insert e n m), n)
-    Just n -> (a, n)

@@ -17,3 +17,5 @@ error = a *> pure b ==> a $> b
 error = pure a <* b ==> a <$ b
 error = a *> return b ==> a $> b
 error = return a <* b ==> a <$ b
+error = Data.Maybe.fromMaybe undefined x ==> Data.Maybe.fromJust x
+error = (\x y -> compare (f x) (f y)) ==> Data.Ord.comparing f

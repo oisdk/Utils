@@ -1,1 +1,4 @@
 -- Haskell Playground 1.0
+let p = equalOdds [1..9]
+
+p

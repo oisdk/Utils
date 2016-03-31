@@ -11,10 +11,11 @@ Executable Tricks
   buildable: True
   build-depends:
       base -any,
+      free -any,
       containers -any,
+      recursion-schemes -any,
       mtl -any,
-      text -any,
-      comonad -any
+      text -any
   other-modules:
       Parse
       Numbers
@@ -25,4 +26,5 @@ Executable Tricks
       Function
       AppFunc
       Comonad
+      RecScheme
       Odds

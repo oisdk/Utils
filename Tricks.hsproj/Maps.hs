@@ -5,7 +5,7 @@ module Maps
   , mostFrequent
   ) where
   
-import Data.Map.Strict (Map, insertWith, empty, insertLookupWithKey, singleton)
+import Data.Map.Strict (Map, insertWith, empty, insertLookupWithKey, singleton, lookup)
 import Data.Foldable (foldr, foldr1, Foldable, foldl')
 import Prelude hiding (foldr)
 import Data.Maybe (isNothing)

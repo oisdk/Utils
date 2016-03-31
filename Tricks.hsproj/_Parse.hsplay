@@ -1,2 +1,4 @@
 -- Haskell Playground 1.0
-counts (pack "acb")
+lines
+double (pack "12")
+
