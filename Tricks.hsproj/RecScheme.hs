@@ -33,29 +33,25 @@ anaM
 anaM g = a where a = fmap embed . traverse a <=< g
 
 newtype RecFR a ans = RecFR (a -> (RecFR a ans -> ans) -> ans)
-newtype RecF f b a = RecF { unRecF :: forall b. Base f (b -> a) -> b -> a }
-newtype FR1 f b w = FR1 (forall w. (f b -> w) -> w)
-unFR1 (FR1 x) = x
+newtype RecF f a = RecF { unRecF :: Base f (RecF f a -> a) -> a }
+newtype BR f a = BR { unBR :: a -> Base f (BR f a) }
 
-zipWithF' :: [a] -> [b] -> [(a,b)]
-zipWithF' xs ys = cata f ys (cata alg xs) where
-  alg Nil = FR1 (\f -> f Nil)
---  f :: Prim [b] (FR1 (Prim [a]) b0 w0 -> [(a, b)]) -> FR1 (Prim [a]) b0 w0 -> [(a, b)]
-  f Nil _ = []
-  f (Cons x (FR1 f)) l = f l
---  alg _ Nil = []
---  alg (Cons x xs) (Cons y ys) = (x,y) : ys xs
---  f = flip unFR1
 
+  
+upTo :: [Int] -> BR [Int] _
+upTo = cata (BR . alg) where
+  alg Nil _ = Nil
+  alg (Cons x xs) y = Cons x (unBR xs y)
+  
 
 newtype FR a = FR (forall ans. (a -> ans -> ans) -> ans -> ans)
 unFR (FR x) = x
 
 type Alg = Mu -- General algebra
 --
---mutu :: (Functor.Foldable f, Functor.Foldable g) 
---     => (Base f (RecF g b c) -> RecF g b c) -> f -> g -> c
---mutu alg xs ys = cata (flip unRecF) ys (cata alg xs)
+mutu :: (Functor.Foldable f, Functor.Foldable g) 
+     => (Base f (RecF g c) -> RecF g c) -> f -> g -> c
+mutu alg xs ys = cata (flip unRecF) ys (cata alg xs)
 --
 --
 --zipWithF :: (a -> b -> c) -> [a] -> [b] -> [c]

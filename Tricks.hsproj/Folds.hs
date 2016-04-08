@@ -1,4 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE BangPatterns #-}
 
 module Folds
   ( count
@@ -22,7 +23,7 @@ import Control.Applicative hiding (empty)
 import Function  
 import Control.Arrow
 import Data.Bifunctor
-
+import Data.Traversable
 
 count :: (Eq a, Foldable f, Integral n) => a -> f a -> n
 count x = foldl' (\a e -> if x == e then a+1 else a) 0
@@ -34,11 +35,11 @@ dropWhile' :: (a -> Bool) -> [a] -> [a]
 dropWhile' p = fst . foldr f ([],[]) where
   f e t = (if p e then fst t else xs,xs) where xs = e : snd t
 
-shorterThan :: (Foldable f, Integral n) => n -> f a -> Bool
-shorterThan n xs = foldr (\_ a n -> 1 < n && a (n-1)) (const True) xs n 
+shorterThan :: (Foldable f, Integral n) => f a -> n -> Bool
+shorterThan = foldr (\_ a !n -> 1 < n && a (n-1)) (const True)
 
-longerThan :: (Foldable f, Integral n) => n -> f a -> Bool
-longerThan n xs = foldr (\_ a n -> 1 > n || a (n-1)) (const False) xs n
+longerThan :: (Foldable f, Integral n) => f a -> n -> Bool
+longerThan = foldr (\_ a !n -> 1 > n || a (n-1)) (const False)
 
 filterAccumL :: (x -> acc -> (Bool, acc)) -> acc -> [x] -> ([x], acc)
 filterAccumL f s t = runState (filterM (state . f) t) s
@@ -70,6 +71,12 @@ foldr2 c i xs = foldr f (\_ -> i) xs . RecFR . foldr g (\_ _ -> i) where
   g e2 r2 e1 r1 = c e1 e2 (r1 (RecFR r2))
   f e r x = unRecFR x e r
 
+newtype RecAccu a b = RecAccu { unRecAccu :: a -> (RecAccu a b, b) }
+
+zipInto :: (Traversable t, Foldable f) => (a -> Maybe b -> c) -> t a -> f b -> t c
+zipInto f xs = snd . flip (mapAccumL unRecAccu) xs . RecAccu . foldr h i where
+  i e = (RecAccu i, f e Nothing)
+  h e2 a e1 = (RecAccu a, f e1 (Just e2))
 
 
 
