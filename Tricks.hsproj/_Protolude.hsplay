@@ -1,2 +1,2 @@
 -- Haskell Playground 1.0
-foldr
+zip [1..] [2..]

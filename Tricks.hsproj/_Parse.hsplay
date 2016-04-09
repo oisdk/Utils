@@ -1,4 +1,0 @@
--- Haskell Playground 1.0
-lines
-double (pack "12")
-

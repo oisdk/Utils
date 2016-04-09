@@ -14,17 +14,10 @@ Executable Tricks
       free -any,
       containers -any,
       recursion-schemes -any,
-      mtl -any,
-      text -any
+      safe -any,
+      mtl -any
   other-modules:
-      Parse
-      Numbers
-      Folds
+      Protolude
       Types
-      Maps
-      Bool
-      Function
-      AppFunc
-      Comonad
       RecScheme
       Odds

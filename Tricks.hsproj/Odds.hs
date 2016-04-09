@@ -6,7 +6,10 @@ import Data.Ratio
 import Data.Monoid
 import Data.Foldable
 import Control.Applicative
-import Bool (bool)
+
+bool :: a -> a -> Bool -> a
+bool t _ True  = t
+bool _ f False = f
 
 -- | A Odds monad. The singleton is a certainty, with more than one, the
 -- Odds of the head element is given by a rational number.
