@@ -1,6 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-
 module Protolude where
   
 import qualified Data.Map as Map
@@ -20,6 +19,9 @@ import Control.Applicative
 import Safe.Foldable
 import Data.Coerce
 
+newtype RecFold a b = RecFold { runRecFold :: a -> (RecFold a b -> b) -> b }
+newtype RecAccu a b = RecAccu { runRecAccu :: a -> (RecAccu a b, b) }
+
 increment :: (P.Integral a, Ord k) => k -> Map k a -> Map k a
 increment k = Map.insertWith (P.+) k 1
 
@@ -33,22 +35,23 @@ infixr 9 .:
 filterAccumL :: (x -> acc -> (Bool, acc)) -> acc -> [x] -> ([x], acc)
 filterAccumL f s t = runState (filterM (state . f) t) s
 
-newtype RecFR a ans = RecFR { unRecFR :: a -> (RecFR a ans -> ans) -> ans }
-
 foldr2 :: (Foldable f, Foldable g) => (a -> b -> c -> c) -> c -> f a -> g b -> c
-foldr2 c i xs = foldr f (\_ -> i) xs . RecFR .# foldr g (\_ _ -> i) where
-  g e2 r2 e1 r1 = c e1 e2 (r1 (coerce r2))
-  f e r x = unRecFR x e r
-
-newtype RecAccu a b = RecAccu { unRecAccu :: a -> (RecAccu a b, b) }
-
-zipInto :: (Traversable t, Foldable f) => (a -> Maybe b -> c) -> t a -> f b -> t c
-zipInto f xs = snd . flip (mapAccumL coerce) xs . RecAccu .# foldr h i where
-  i e = (RecAccu i, f e Nothing)
-  h e2 a e1 = (RecAccu a, f e1 (Just e2))
-
+foldr2 c i xs = foldr f (\_ -> i) xs . RecFold . foldr g (\_ _ -> i) where
+  g e2 r2 e1 r1 = c e1 e2 (r1 (RecFold r2))
+  f e r x = runRecFold x e r
+  
+foldr3 :: (Foldable f, Foldable g, Foldable h) => (a -> b -> c -> d -> d) -> d -> f a -> g b -> h c -> d
+foldr3 c i xs ys zs = foldr f (\_ -> i) xs (RecFold (foldr2 g (\_ _ -> i) ys zs)) where
+  g e2 e3 r2 e1 r1 = c e1 e2 e3 (r1 (RecFold r2))
+  f e r x = runRecFold x e r
+  
 zipWith :: (Foldable f, Foldable g) => (a -> b -> c) -> f a -> g b -> [c]
 zipWith f = foldr2 (\a b c -> f a b : c) []
+
+zipInto :: (Traversable t, Foldable f) => (a -> Maybe b -> c) -> t a -> f b -> t c
+zipInto f xs = snd . flip (mapAccumL runRecAccu) xs . RecAccu . foldr h i where
+  i e = (RecAccu i, f e Nothing)
+  h e2 a e1 = (RecAccu a, f e1 (Just e2))
 
 zip :: (Foldable f, Foldable g) => f a -> g b -> [(a,b)]
 zip = zipWith (,)

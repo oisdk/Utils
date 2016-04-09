@@ -11,13 +11,11 @@ Executable Tricks
   buildable: True
   build-depends:
       base -any,
-      free -any,
+      safe -any,
       containers -any,
       recursion-schemes -any,
-      safe -any,
       mtl -any
   other-modules:
       Protolude
-      Types
       RecScheme
       Odds

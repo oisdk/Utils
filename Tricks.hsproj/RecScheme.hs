@@ -8,13 +8,9 @@ module RecScheme where
   
 import Data.Functor.Foldable hiding (Foldable)
 import qualified Data.Functor.Foldable as Functor
-import Data.Foldable hiding (fold)
+import Data.Traversable
 import Control.Monad
-import Data.Map (Map, alter, empty, assocs, lookup)
-import Prelude hiding (lookup)
-import Data.Maybe
-import Control.Comonad.Cofree
-
+import Prelude hiding (zipWith)
 
 -- | A monadic catamorphism.
 cataM
@@ -32,14 +28,13 @@ anaM
   -> m t
 anaM g = a where a = fmap embed . traverse a <=< g
 
-mutu :: (Functor.Foldable f, Functor.Foldable g) 
+zipo :: (Functor.Foldable f, Functor.Foldable g) 
      => (Base f (Mu (Base f)) -> Base g (Mu (Base f) -> c) -> c)
      -> f -> g -> c
-mutu alg xs ys = cata (flip (alg . project)) ys (Mu (flip cata xs))
+zipo alg = (flip . cata . flip) (alg . project) . refix
 
 zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
-zipWith c = mutu alg where
+zipWith c = zipo alg where
   alg Nil _ = []
   alg _ Nil = []
   alg (Cons x xs) (Cons y ys) = c x y : ys xs
-  
