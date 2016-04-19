@@ -1,16 +1,16 @@
-{-# LANGUAGE DeriveFunctor #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE DeriveFunctor       #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE RankNTypes          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies        #-}
 
 module RecScheme where
-  
-import Data.Functor.Foldable hiding (Foldable)
+
+import           Control.Monad
+import           Data.Functor.Foldable hiding (Foldable)
 import qualified Data.Functor.Foldable as Functor
-import Data.Traversable
-import Control.Monad
-import Prelude hiding (zipWith)
+import           Data.Traversable
+import           Prelude               hiding (zipWith)
 
 -- | A monadic catamorphism.
 cataM
@@ -28,13 +28,13 @@ anaM
   -> m t
 anaM g = a where a = fmap embed . traverse a <=< g
 
-zipo :: (Functor.Foldable f, Functor.Foldable g) 
-     => (Base f (Mu (Base f)) -> Base g (Mu (Base f) -> c) -> c)
+zipo :: (Functor.Foldable f, Functor.Foldable g)
+     => (Base f (Mu (Base g) -> c) -> Base g (Mu (Base g)) -> c)
      -> f -> g -> c
-zipo alg = (flip . cata . flip) (alg . project) . refix
+zipo alg xs = cata (\x -> alg x . project) xs . refix
 
 zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
 zipWith c = zipo alg where
   alg Nil _ = []
   alg _ Nil = []
-  alg (Cons x xs) (Cons y ys) = c x y : ys xs
+  alg (Cons x xs) (Cons y ys) = c x y : xs ys

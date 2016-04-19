@@ -9,7 +9,7 @@ import Data.Ord
 import Data.Bool
 import Data.Maybe
 import Data.Function
-import Data.List (uncons)
+import Data.List (uncons, inits)
 import Data.Tuple
 import Data.Foldable
 import Data.Traversable
@@ -27,6 +27,9 @@ increment k = Map.insertWith (P.+) k 1
 
 counts :: (P.Integral a, Ord k, Foldable f) => f k -> Map k a
 counts = foldr increment Map.empty
+
+insert1 :: Ord k => k -> a -> Map k [a] -> Map k [a]
+insert1 k v = Map.alter (Just . maybe [v] (v:)) k
 
 infixr 9 .: 
 (.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
@@ -69,3 +72,8 @@ infixr 9 .#
 (.#) :: Coercible b c => (b -> c) -> (a -> b) -> a -> c
 (.#) _ = coerce 
 
+dropWhile' :: (a -> Bool) -> [a] -> [a]
+dropWhile' p = fst . foldr f ([],[]) where
+  f e ~(xs,ys) = (if p e then xs else zs, zs) where zs = e : ys
+
+            
