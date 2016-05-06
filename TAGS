@@ -1,0 +1,254 @@
+
+./HLint.hs,34
+warn warn3,4
+error error11,12
+
+./RecScheme.hsproj/BST.hs,522
+data BST BST13,14
+data BST a = Leaf Leaf13,14
+data BST a = Leaf | Node Node13,14
+data BSTF BSTF15,16
+data BSTF a r = LeafF LeafF15,16
+data BSTF a r = LeafF | NodeF NodeF15,16
+type instance instance17,18
+type instance Base Base17,18
+instance instance19,20
+treeSort treeSort27,28
+treeSort treeSort28,29
+fromList fromList32,33
+fromList fromList33,34
+coalg coalg35,36
+correct correct46,47
+correct correct47,48
+index index53,54
+index index54,55
+indexOf indexOf60,61
+indexOf indexOf61,62
+
+./RecScheme.hsproj/Expr.hs,458
+data Expr Expr15,16
+    Abs Abs16,17
+  | Sig Sig17,18
+  | Cst Cst18,19
+  | Neg Neg19,20
+  | Mul Mul20,21
+  | Sub Sub21,22
+  | Add Add22,23
+data ExprF ExprF25,26
+    AbsF AbsF26,27
+  | SigF SigF27,28
+  | CstF CstF28,29
+  | NegF NegF29,30
+  | MulF MulF30,31
+  | SubF SubF31,32
+  | AddF AddF32,33
+type instance instance35,36
+type instance Base Base35,36
+instance instance37,38
+evalAlg evalAlg55,56
+evalAlg evalAlg56,57
+
+./RecScheme.hsproj/Peano.hs,201
+module Peano Peano5,6
+data NumF NumF10,11
+data NumF a = Zero Zero10,11
+data NumF a = Zero | Succ Succ10,11
+type instance instance12,13
+type instance Base Base12,13
+instance instance14,15
+
+./RecScheme.hsproj/RecScheme.hs,226
+eval eval11,12
+eval eval12,13
+fact fact14,15
+fact fact15,16
+countMax countMax22,23
+countMax countMax23,24
+countMax' countMax'33,34
+countMax' countMax'34,35
+countTest countTest37,38
+countTest countTest38,39
+
+./RecScheme.hsproj/Schemes.hs,96
+module Schemes Schemes2,3
+zipo zipo8,9
+zipo zipo13,14
+cataM cataM21,22
+anaM anaM29,30
+
+./RecScheme.hsproj/Setup.hs,15
+main main2,3
+
+./RecScheme.hsproj/Square.hs,566
+newtype Pair Pair15,16
+newtype Pair v w a = P P15,16
+newtype Empty Empty18,19
+newtype Empty a = Empty Empty18,19
+data Square Square21,22
+  Square Square22,23
+  Square { size size22,23
+         , getSquare getSquare23,24
+data Square_ Square_26,27
+    Zero Zero27,28
+  | Even Even28,29
+  | Odd Odd29,30
+subP subP32,33
+subP subP36,37
+mkP mkP40,41
+mkP mkP41,42
+create create43,44
+create create44,45
+create_ create_51,52
+create_ create_58,59
+sub sub71,72
+sub sub72,73
+sub_ sub_77,78
+sub_ sub_78,79
+instance instance83,84
+
+./Square.hs,933
+newtype Pair Pair16,17
+newtype Pair v w a = P P16,17
+instance instance19,20
+newtype EmptyF EmptyF22,23
+newtype EmptyF a = EmptyF EmptyF22,23
+data Square_ Square_28,29
+    Zero Zero29,30
+  | Even Even30,31
+  | Odd Odd31,32
+mkP mkP34,35
+create create36,37
+create create37,38
+create_ create_39,40
+create_ create_47,48
+leE leE55,56
+leE leE56,57
+leI leI58,59
+leI leI59,60
+leP leP61,62
+leP leP64,65
+type FlippedLens' FlippedLens'68,69
+type FlippedLens' s s68,69
+ix_ ix_70,71
+ix_ ix_71,72
+data Square Square90,91
+  Square Square91,92
+  Square { _size _size91,92
+         , _square _square92,93
+class Eq1 f => EqR1 EqR195,96
+  eqr1 :: (Eq a, EqR1 g) => f f96,97
+  eqr1 eqr196,97
+type instance instance122,123
+type instance Index Index122,123
+type instance instance123,124
+type instance IxValue IxValue123,124
+squareSize squareSize125,126
+squareSize squareSize126,127
+
+./Tricks.hsproj/Odds.hs,453
+bool bool9,10
+bool bool10,11
+data Odds Odds15,16
+data Odds a = Certainly Certainly15,16
+data Odds a = Certainly a | (R(15,16
+data Odds a = Certainly a | (Rational, a) )15,16
+instance instance17,18
+oddsOf oddsOf21,22
+oddsOf oddsOf22,23
+equalOdds equalOdds25,26
+equalOdds equalOdds26,27
+conc conc37,38
+conc conc38,39
+flatten flatten43,44
+flatten flatten44,45
+distribution distribution64,65
+distribution distribution65,66
+
+./Tricks.hsproj/Protolude.hs,951
+module Protolude Protolude2,3
+newtype RecFold RecFold21,22
+newtype RecFold a b = RecFold RecFold21,22
+newtype RecFold a b = RecFold { runRecFold runRecFold21,22
+newtype RecAccu RecAccu22,23
+newtype RecAccu a b = RecAccu RecAccu22,23
+newtype RecAccu a b = RecAccu { runRecAccu runRecAccu22,23
+increment increment24,25
+increment increment25,26
+counts counts27,28
+counts counts28,29
+insert1 insert130,31
+insert1 insert131,32
+(.:).:34,35
+(.(35,36
+filterAccumL filterAccumL37,38
+filterAccumL filterAccumL38,39
+foldr2 foldr240,41
+foldr2 foldr241,42
+foldr3 foldr345,46
+foldr3 foldr346,47
+zipWith zipWith50,51
+zipWith zipWith51,52
+zipInto zipInto53,54
+zipInto zipInto54,55
+zip zip58,59
+zip zip59,60
+iterEnd iterEnd61,62
+iterEnd iterEnd62,63
+ensure ensure64,65
+ensure ensure65,66
+unfoldl unfoldl67,68
+unfoldl unfoldl68,69
+(.#).#71,72
+dropWhile' dropWhile'74,75
+dropWhile' dropWhile'75,76
+
+./Tricks.hsproj/RecScheme.hs,531
+module RecScheme RecScheme6,7
+zipo zipo15,16
+zipo zipo20,21
+data Expr Expr22,23
+    Abs Abs23,24
+  | Cst Cst24,25
+  | Neg Neg25,26
+  | Mul Mul26,27
+  | Sub Sub27,28
+  | Add Add28,29
+data ExprF ExprF31,32
+    AbsF AbsF32,33
+  | CstF CstF33,34
+  | NegF NegF34,35
+  | MulF MulF35,36
+  | SubF SubF36,37
+  | AddF AddF37,38
+type instance instance40,41
+type instance Base Base40,41
+instance instance42,43
+eval eval60,61
+eval eval61,62
+pprAlg pprAlg79,80
+pprAlg pprAlg80,81
+anaM anaM98,99
+
+./Tricks.hsproj/Setup.hs,15
+main main2,3
+
+./Tricks.hsproj/Tricks.hs,449
+module Tricks Tricks2,3
+newtype DefaultDict DefaultDict9,10
+  DefaultDict DefaultDict10,11
+  DefaultDict { getMap getMap10,11
+lookup lookup13,14
+lookup lookup14,15
+insert insert16,17
+insert insert17,18
+alter alter19,20
+alter alter20,21
+instance instance23,24
+delete delete30,31
+delete delete31,32
+fromList fromList33,34
+fromList fromList34,35
+count count36,37
+count count37,38
+empty empty40,41
+empty empty41,42
