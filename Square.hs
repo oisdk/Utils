@@ -131,7 +131,7 @@ squareSize = to _size
 
 instance Show a => Show (Square a) where
   showsPrec _ (Square n m) =
-    flip (foldr (\e a -> e (' ':a))) [ showList [ view (ix_ (i,j)) m | j <- [1..n]] | i <- [1..n] ]
+    flip (foldr (\e a -> e ('\n':a))) [ showList [ view (ix_ (i,j)) m | j <- [1..n]] | i <- [1..n] ]
 
 instance Arbitrary a => Arbitrary (Square a) where
   arbitrary = sized (traverse (const arbitrary) . create ())
