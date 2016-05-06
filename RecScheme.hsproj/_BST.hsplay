@@ -1,0 +1,4 @@
+-- Haskell Playground 1.0
+let t = fromList [1,9,3,6,8,2,4,5,7]
+
+indexOf 8 t >>= flip index t

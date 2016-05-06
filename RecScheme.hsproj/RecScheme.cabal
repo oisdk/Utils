@@ -1,0 +1,19 @@
+name: RecScheme
+version: 1.0
+cabal-version: 1.6
+build-type: Simple
+license: AllRightsReserved
+stability: experimental
+Executable RecScheme
+  main-is: RecScheme.hs
+  buildable: True
+  build-depends:
+      base -any,
+      recursion-schemes -any,
+      QuickCheck -any
+  other-modules:
+      Square
+      Expr
+      Peano
+      BST
+      Schemes

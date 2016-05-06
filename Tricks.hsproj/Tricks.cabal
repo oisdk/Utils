@@ -13,8 +13,9 @@ Executable Tricks
       base -any,
       safe -any,
       containers -any,
-      recursion-schemes -any,
-      mtl -any
+      QuickCheck -any,
+      mtl -any,
+      recursion-schemes -any
   other-modules:
       Protolude
       RecScheme

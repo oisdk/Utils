@@ -65,8 +65,8 @@ iterEnd f = g where g x = x : maybe [] g (f x)
 ensure :: Alternative f => (a -> Bool) -> a -> f a
 ensure p x = bool (pure x) empty (p x)
 
-unfoldl :: (b -> Maybe (b, a)) -> b -> [a]
-unfoldl f = r [] where r a x = maybe a (\(x,y) -> r (y:a) x) (f x)
+unfoldl :: (b -> Maybe (b, a)) -> b -> (b, [a])
+unfoldl f = r [] where r a x = maybe (x,a) (\(x,y) -> r (y:a) x) (f x)
 
 infixr 9 .#
 (.#) :: Coercible b c => (b -> c) -> (a -> b) -> a -> c

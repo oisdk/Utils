@@ -1,2 +1,1 @@
 -- Haskell Playground 1.0
-groupBy' (\a b -> abs (a-b) <= 1) [1,1,5,4,3,2,3,2]
