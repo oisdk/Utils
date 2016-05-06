@@ -106,44 +106,45 @@ sub_ sub_77,78
 sub_ sub_78,79
 instance instance83,84
 
-./Square.hs,933
-newtype Pair Pair16,17
-newtype Pair v w a = P P16,17
-instance instance19,20
-newtype EmptyF EmptyF22,23
-newtype EmptyF a = EmptyF EmptyF22,23
-data Square_ Square_28,29
-    Zero Zero29,30
-  | Even Even30,31
-  | Odd Odd31,32
-mkP mkP34,35
-create create36,37
-create create37,38
-create_ create_39,40
-create_ create_47,48
-leE leE55,56
-leE leE56,57
-leI leI58,59
-leI leI59,60
-leP leP61,62
-leP leP64,65
-type FlippedLens' FlippedLens'68,69
-type FlippedLens' s s68,69
-ix_ ix_70,71
-ix_ ix_71,72
-data Square Square90,91
-  Square Square91,92
-  Square { _size _size91,92
-         , _square _square92,93
-class Eq1 f => EqR1 EqR195,96
-  eqr1 :: (Eq a, EqR1 g) => f f96,97
-  eqr1 eqr196,97
-type instance instance122,123
-type instance Index Index122,123
-type instance instance123,124
-type instance IxValue IxValue123,124
-squareSize squareSize125,126
-squareSize squareSize126,127
+./Square.hs,950
+newtype Pair Pair17,18
+newtype Pair v w a = P P17,18
+data Square_ Square_20,21
+    Zero Zero21,22
+  | Even Even22,23
+  | Odd Odd23,24
+mkP mkP26,27
+mkP mkP27,28
+create create29,30
+create create30,31
+create_ create_32,33
+create_ create_40,41
+leE leE48,49
+leE leE49,50
+leI leI51,52
+leI leI52,53
+leP leP54,55
+leP leP57,58
+type FlippedLens' FlippedLens'61,62
+type FlippedLens' s s61,62
+ix_ ix_63,64
+ix_ ix_64,65
+instance instance70,71
+data Square Square83,84
+  Square Square84,85
+  Square { _size _size84,85
+         , _square _square85,86
+class Eq1 f => EqR1 EqR188,89
+  eqr1 :: (Eq a, EqR1 g) => f f89,90
+  eqr1 eqr189,90
+newtype EmptyF EmptyF99,100
+newtype EmptyF a = EmptyF EmptyF99,100
+type instance instance125,126
+type instance Index Index125,126
+type instance instance126,127
+type instance IxValue IxValue126,127
+squareSize squareSize128,129
+squareSize squareSize129,130
 
 ./Tricks.hsproj/Odds.hs,453
 bool bool9,10

@@ -13,18 +13,10 @@ module Square
 
 import           Control.Lens
 import           Prelude.Extras
+import           Test.QuickCheck
 
 newtype Pair v w a = P (v a, w a)
   deriving (Functor, Foldable, Traversable, Eq, Ord)
-
-instance (Eq1 v, Eq1 w) => Eq1 (Pair v w) where
-  P (a,b) ==# P (c,d) = a ==# c && b ==# d
-
-newtype EmptyF a = EmptyF ()
-  deriving (Functor, Foldable, Traversable, Eq, Ord)
-
-instance Eq1 EmptyF where
-  _ ==# _ = True
 
 data Square_ v w a =
     Zero (forall b. Int -> Lens' (v b) b) (v (v a))
@@ -32,6 +24,7 @@ data Square_ v w a =
   | Odd (Square_ (Pair v w) (Pair w w) a)
   deriving (Functor)
 
+mkP :: (a -> v a) -> (a -> w a) -> a -> Pair v w a
 mkP mkv mkw x = P (mkv x, mkw x)
 
 create :: a -> Int -> Square a
@@ -57,7 +50,7 @@ leE :: Int -> Lens' (EmptyF a) a
 leE _ _ (EmptyF ()) = undefined
 
 leI :: Int -> Lens' (Identity a) a
-leI 0 f (Identity x) = Identity <$> f x
+leI _ f (Identity x) = Identity <$> f x
 
 leP :: (Int -> Lens' (v a) a)
     -> (Int -> Lens' (w a) a)
@@ -96,11 +89,18 @@ data Square a =
 class Eq1 f => EqR1 f where
   eqr1 :: (Eq a, EqR1 g) => f (g a) -> f (g a) -> Bool
 
-instance EqR1 EmptyF where
-  eqr1 _ _ = True
+instance EqR1 EmptyF where eqr1 _ _ = True
 
 instance (EqR1 v, EqR1 w) => EqR1 (Pair v w) where
   eqr1 (P (a,b)) (P (c,d)) = eqr1 a c && eqr1 b d
+
+instance (Eq1 v, Eq1 w) => Eq1 (Pair v w) where
+  P (a,b) ==# P (c,d) = a ==# c && b ==# d
+
+newtype EmptyF a = EmptyF ()
+  deriving (Functor, Foldable, Traversable, Eq, Ord)
+
+instance Eq1 EmptyF where _ ==# _ = True
 
 instance EqR1 Identity where
   eqr1 (Identity a) (Identity b) = a ==# b
@@ -114,6 +114,9 @@ instance (EqR1 v, EqR1 w) => Eq1 (Square_ v w) where
 instance Eq a => Eq (Square a) where
   Square n v == Square m w = n == m && v ==# w
 
+instance Eq1 Square where
+  Square n v ==# Square m w = n == m && v ==# w
+
 instance Ixed (Square a) where
   ix (i,j) f (Square n m)
     | i >= n    = pure (Square n m)
@@ -125,3 +128,10 @@ type instance IxValue (Square a) = a
 
 squareSize :: Getter (Square a) Int
 squareSize = to _size
+
+instance Show a => Show (Square a) where
+  showsPrec _ (Square n m) =
+    flip (foldr (\e a -> e (' ':a))) [ showList [ view (ix_ (i,j)) m | j <- [1..n]] | i <- [1..n] ]
+
+instance Arbitrary a => Arbitrary (Square a) where
+  arbitrary = sized (traverse (const arbitrary) . create ())
