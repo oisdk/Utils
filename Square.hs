@@ -9,6 +9,7 @@ module Square
   ( Square
   , squareSize
   , create
+  , fromList
   ) where
 
 import           Control.Lens
@@ -43,7 +44,7 @@ create_ lev lew vsize wsize mkv mkw x n
   | even n =
     Even (create_ lev (leP lew lew wsize) vsize (wsize+wsize) mkv (mkP mkw mkw) x (n `div` 2))
   | otherwise =
-    Odd  (create_ (leP lev lew vsize) (leP lew lew wsize) (vsize+vsize) (wsize+wsize)
+    Odd  (create_ (leP lev lew vsize) (leP lew lew wsize) (vsize+wsize) (wsize+wsize)
          (mkP mkv mkw) (mkP mkw mkw) x (n `div` 2))
 
 leE :: Int -> Lens' (EmptyF a) a
@@ -131,7 +132,31 @@ squareSize = to _size
 
 instance Show a => Show (Square a) where
   showsPrec _ (Square n m) =
-    flip (foldr (\e a -> e ('\n':a))) [ showList [ view (ix_ (i,j)) m | j <- [1..n]] | i <- [1..n] ]
+    flip (foldr (\e a -> e ('\n':a))) [ showList [ view (ix_ (i,j)) m | j <- idxs] | i <- idxs]
+      where idxs = [0..(n-1)]
 
 instance Arbitrary a => Arbitrary (Square a) where
   arbitrary = sized (traverse (const arbitrary) . create ())
+
+newtype MaybeState s a =
+  MaybeState { runMaybeState :: s -> Maybe (s, a)
+             } deriving (Functor)
+
+instance Applicative (MaybeState s) where
+  pure x = MaybeState (\s -> Just (s, x))
+  MaybeState f <*> MaybeState x = MaybeState (\t -> (\(s,g) -> (fmap.fmap) g (x s)) =<< f t)
+
+newtype RecAccu a b =
+  RecAccu { runRecAccu :: a -> Maybe (RecAccu a b, b) }
+
+mapAccumL :: Traversable t => (a -> b -> Maybe (a, c)) -> a -> t b -> Maybe (t c)
+mapAccumL f s t = snd <$> runMaybeState (traverse (MaybeState . flip f) t) s
+
+replace :: (Traversable t, Foldable f) => t a -> f b -> Maybe (t b)
+replace xs =
+  flip (mapAccumL runRecAccu) xs . RecAccu . foldr h i where
+    i _ = Nothing
+    h e a _ = Just (RecAccu a, e)
+
+fromList :: Foldable f => Int -> f a -> Maybe (Square a)
+fromList n l = replace (create () n) l

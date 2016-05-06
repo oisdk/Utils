@@ -106,45 +106,57 @@ sub_ sub_77,78
 sub_ sub_78,79
 instance instance83,84
 
-./Square.hs,950
-newtype Pair Pair17,18
-newtype Pair v w a = P P17,18
-data Square_ Square_20,21
-    Zero Zero21,22
-  | Even Even22,23
-  | Odd Odd23,24
-mkP mkP26,27
+./Square.hs,1341
+newtype Pair Pair18,19
+newtype Pair v w a = P P18,19
+data Square_ Square_21,22
+    Zero Zero22,23
+  | Even Even23,24
+  | Odd Odd24,25
 mkP mkP27,28
-create create29,30
+mkP mkP28,29
 create create30,31
-create_ create_32,33
-create_ create_40,41
-leE leE48,49
+create create31,32
+create_ create_33,34
+create_ create_41,42
 leE leE49,50
-leI leI51,52
+leE leE50,51
 leI leI52,53
-leP leP54,55
-leP leP57,58
-type FlippedLens' FlippedLens'61,62
-type FlippedLens' s s61,62
-ix_ ix_63,64
+leI leI53,54
+leP leP55,56
+leP leP58,59
+type FlippedLens' FlippedLens'62,63
+type FlippedLens' s s62,63
 ix_ ix_64,65
-instance instance70,71
-data Square Square83,84
-  Square Square84,85
-  Square { _size _size84,85
-         , _square _square85,86
-class Eq1 f => EqR1 EqR188,89
-  eqr1 :: (Eq a, EqR1 g) => f f89,90
-  eqr1 eqr189,90
-newtype EmptyF EmptyF99,100
-newtype EmptyF a = EmptyF EmptyF99,100
-type instance instance125,126
-type instance Index Index125,126
+ix_ ix_65,66
+instance instance71,72
+data Square Square84,85
+  Square Square85,86
+  Square { _size _size85,86
+         , _square _square86,87
+class Eq1 f => EqR1 EqR189,90
+  eqr1 :: (Eq a, EqR1 g) => f f90,91
+  eqr1 eqr190,91
+newtype EmptyF EmptyF100,101
+newtype EmptyF a = EmptyF EmptyF100,101
 type instance instance126,127
-type instance IxValue IxValue126,127
-squareSize squareSize128,129
+type instance Index Index126,127
+type instance instance127,128
+type instance IxValue IxValue127,128
 squareSize squareSize129,130
+squareSize squareSize130,131
+newtype MaybeState MaybeState140,141
+  MaybeState MaybeState141,142
+  MaybeState { runMaybeState runMaybeState141,142
+newtype RecAccu RecAccu148,149
+  RecAccu RecAccu149,150
+  RecAccu { runRecAccu runRecAccu149,150
+mapAccumL mapAccumL151,152
+mapAccumL mapAccumL152,153
+replace replace154,155
+replace replace155,156
+fromList fromList160,161
+fromList fromList161,162
 
 ./Tricks.hsproj/Odds.hs,453
 bool bool9,10
